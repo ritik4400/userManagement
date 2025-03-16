@@ -5,7 +5,7 @@ const { validateToken , authorizeRoles } = require('../middleware/authMiddleware
 //userRoutes
 const {updateData , getUser , createUser , removeData , getAllUser , updateProfile} = require('../controller/userController/userController')
 router.post( '/register', createUser );
-router.put( '/profile', updateProfile );
+router.put( '/profile',validateToken , updateProfile );
 // router.get('/fetchUsers' ,validateToken ,authorizeRoles('admin') ,  getAllUser);
 router.get('/fetchUser/:id' ,validateToken ,authorizeRoles('admin') , getUser);
 router.put('/updateData/:id' ,validateToken ,authorizeRoles('admin'), updateData);

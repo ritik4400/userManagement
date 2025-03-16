@@ -1,11 +1,19 @@
 const { AppError, errorHandler } = require("../../middleware/errorMiddleware");
 const Users = require("../../model/userModel");
-
+const {userSchema , userIdSchema , updateUserSchema , updateProfileSchema }= require('../../validations/user/userValidation')
 
 // POST (Create) a new user
 const createUser = async (req, res, next) => {
+  
   try {
     const { name, email , password } = req.body;
+    const {error } = userSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      errors: error.details.map(err => err.message)
+  });
+  }
 
     if (!name || !email  || !password) 
       // return next(new AppError("Name and email not found", 400));
@@ -39,6 +47,10 @@ const createUser = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const user = await Users.findById(req.params.id);
+    const {error} = userIdSchema.validate(req.params);
+    if(error){
+      return res.status(400).json({message:error.details[0].message})
+    }
     if (!user) return next(new AppError("user not found", 404));
     // if(!user) return res.status(404).json({message:'user not found'});
     res.status(200).json({
@@ -53,7 +65,10 @@ const getUser = async (req, res, next) => {
 const updateData = async (req, res, next) => {
   try {
     const { name, email } = req.body;
-
+    const {error} = updateUserSchema.validate(req.body);
+    if(error){
+      return res.status(400).json({message:error.details[0].message})
+    }
     const user = await Users.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -73,7 +88,14 @@ const updateData = async (req, res, next) => {
 };
 // User can update their own profile
 const updateProfile = async(req,res,next) =>{
+
+  const {error} = updateProfileSchema.validate(req.body);
+    if(error){
+      return res.status(400).json({message:error.details[0].message})
+    }
+
   try {
+
       const {name , email} = req.body; 
   const updateUser = await Users.findByIdAndUpdate(req.body.id ,
       {name , email} , {new : true}
