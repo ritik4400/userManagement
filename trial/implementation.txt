@@ -1,0 +1,7 @@
+node.js
+express
+middleware
+jwt
+mvc format
+mongoose
+bcryptjs

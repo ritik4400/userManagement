@@ -1,0 +1,93 @@
+paths:
+  /addProduct:
+    post:
+      summary: Add a new product
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pname
+                - price
+                - category
+                - stock
+                - ratings
+                - tags
+              properties:
+                pname:
+                  type: string
+                  example: "iPhone 14"
+                price:
+                  type: number
+                  example: 999.99
+                category:
+                  type: string
+                  example: "Electronics"
+                stock:
+                  type: integer
+                  example: 50
+                ratings:
+                  type: number
+                  example: 4.5
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Smartphone", "Apple", "New"]
+      responses:
+        "201":
+          description: Product added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Product added successfully"
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "65fd1b4cda9a9a001f2b3c45"
+                      pname:
+                        type: string
+                        example: "iPhone 14"
+                      price:
+                        type: number
+                        example: 999.99
+                      category:
+                        type: string
+                        example: "Electronics"
+                      stock:
+                        type: integer
+                        example: 50
+                      ratings:
+                        type: number
+                        example: 4.5
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Smartphone", "Apple", "New"]
+        "400":
+          description: Essential data is missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Essential data is missing"
