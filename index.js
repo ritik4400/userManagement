@@ -3,6 +3,7 @@ const cors = require("cors"); // Import CORS
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const swaggerDocs = require("./middleware/swagger");
+
 const app = express();
 const { AppError, errorHandler } = require("./middleware/errorMiddleware");
 app.use(cors()); // Enable CORS
@@ -28,6 +29,9 @@ app.get("/", function (req, res) {
   res.send("Swagger API Docs Example");
   // res.status(200).send('Hello World')
 });
+
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use("/upload", uploadRoutes)
 
 // Global Error-Handling Middleware
 // app.use((err , req , res , next)=>{
