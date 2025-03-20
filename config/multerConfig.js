@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const sanitize = require("sanitize-filename");
+// const sanitize = require("sanitize-filename");
 
 // Allowed file types
 const allowedMimeTypes = [

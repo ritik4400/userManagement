@@ -3,12 +3,13 @@ const cors = require("cors"); // Import CORS
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const swaggerDocs = require("./middleware/swagger");
+// const rateLimiter = require('./middleware/rateLimiter');
 
 const app = express();
 const { AppError, errorHandler } = require("./middleware/errorMiddleware");
 app.use(cors()); // Enable CORS
 app.use(express.json()); // Middleware to parse JSON
-
+// app.use(rateLimiter)
 
 app.use(errorHandler);
 //Loger middleware
