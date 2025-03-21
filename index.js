@@ -3,22 +3,22 @@ const cors = require("cors"); // Import CORS
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const swaggerDocs = require("./middleware/swagger");
-// const rateLimiter = require('./middleware/rateLimiter');
+const {logger , httpLogger} = require('./config/logger')
+const { AppError, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
-const { AppError, errorHandler } = require("./middleware/errorMiddleware");
+
 app.use(cors()); // Enable CORS
 app.use(express.json()); // Middleware to parse JSON
-// app.use(rateLimiter)
-
 app.use(errorHandler);
 //Loger middleware
-const logger = (req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-};
-app.use(logger);
+// const logger = (req, res, next) => {
+//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+//   next();
+// };
+// app.use(logger);
 swaggerDocs(app);
+app.use(httpLogger);
 
 const routes = require("./routes/userRoutes");
 app.use("/api/v1/user", routes);
@@ -26,9 +26,15 @@ app.use("/api/v1/user", routes);
 const productRoutes = require("./routes/productRoutes");
 app.use("/api/v1/product", productRoutes);
 
-app.get("/", function (req, res) {
-  res.send("Swagger API Docs Example");
-  // res.status(200).send('Hello World')
+// app.get("/", function (req, res) {
+//   logger.info("Home route accessed");
+//   res.send("Swagger API Docs Example");
+//   // res.status(200).send('Hello World')
+// });
+
+app.get("/", (req, res) => {
+  logger.error("Something went wrong!", { errorCode: 500 });
+  res.status(500).send("Internal Server Error");
 });
 
 const uploadRoutes = require('./routes/uploadRoutes');
