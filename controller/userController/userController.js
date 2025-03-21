@@ -1,3 +1,4 @@
+const logger  = require("../../config/logger");
 const { AppError, errorHandler } = require("../../middleware/errorMiddleware");
 const Users = require("../../model/userModel");
 const {userSchema , userIdSchema , updateUserSchema , updateProfileSchema }= require('../../validations/user/userValidation')
@@ -7,8 +8,14 @@ const createUser = async (req, res, next) => {
   
   try {
     const { name, email , password } = req.body;
+
+    logger.info("received request to create user")
+
+    // Validate request
     const {error } = userSchema.validate(req.body);
+
   if (error) {
+    logger.warn("Validation failed" , {errors: error.details.map(err => err.message)})
     return res.status(400).json({
       success: false,
       errors: error.details.map(err => err.message)
@@ -17,6 +24,7 @@ const createUser = async (req, res, next) => {
 
     if (!name || !email  || !password) 
       // return next(new AppError("Name and email not found", 400));
+    logger.warn("Missing required field" , {name , email})
       return res.status(400).json({
         success : false,
         message: "Name and email not found"
@@ -28,8 +36,10 @@ const createUser = async (req, res, next) => {
       tempPassword : password
     });
     await newUser.save();
+    logger.info("User created successfully" , {user:newUser._id})
     res.status(201).json(newUser);
   } catch (error) {
+    logger.error("Error creating user" , {error:error.message})
     next(error);
   }
 };
@@ -46,18 +56,28 @@ const createUser = async (req, res, next) => {
 //Get user by id
 const getUser = async (req, res, next) => {
   try {
+    logger.info("Fetching user data" , {userId:req.params.id})
+
     const user = await Users.findById(req.params.id);
     const {error} = userIdSchema.validate(req.params);
     if(error){
+
+      logger.warn("Invalid userId format",{userId:req.params.id ,message:error.details[0].message } )
       return res.status(400).json({message:error.details[0].message})
     }
-    if (!user) return next(new AppError("user not found", 404));
-    // if(!user) return res.status(404).json({message:'user not found'});
+    if (!user){
+      logger.warn("user not found", {userId: req.params.id})
+      return next(new AppError("user not found", 404));
+    } 
+
+    logger.info("User data fetched successfully", {userId:req.params.id})
+
     res.status(200).json({
       success: true,
       data: user,
     });
   } catch (error) {
+    logger.error("Error fetching user data", { error: error.message });
     next(error);
   }
 };

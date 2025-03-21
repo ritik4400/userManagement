@@ -3,7 +3,8 @@ const cors = require("cors"); // Import CORS
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const swaggerDocs = require("./middleware/swagger");
-const {logger , httpLogger} = require('./config/logger')
+const httpLogger = require('./middleware/httpLogger')
+const logger = require('./config/logger')
 const { AppError, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
